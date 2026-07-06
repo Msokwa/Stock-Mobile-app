@@ -9,12 +9,22 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  test('adding a holding increases the stored share count', () async {
-    await addPortfolioHolding('AAPL', shares: 2);
-    await addPortfolioHolding('AAPL', shares: 3);
+  test('mergeHoldingShares increases the share count for the same symbol', () {
+    final holdings = <String, int>{'AAPL': 2};
 
-    final holdings = await loadPortfolioHoldings();
+    final updated = mergeHoldingShares(holdings, 'AAPL', 3);
 
-    expect(holdings['AAPL'], 5);
+    expect(updated['AAPL'], 5);
   });
+
+  test(
+    'mergeHoldingShares removes a symbol when the remaining shares reach zero',
+    () {
+      final holdings = <String, int>{'AAPL': 2};
+
+      final updated = mergeHoldingShares(holdings, 'AAPL', -2, allowZero: true);
+
+      expect(updated.containsKey('AAPL'), isFalse);
+    },
+  );
 }

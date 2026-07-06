@@ -7,7 +7,7 @@ class Splash1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF191625),
+      backgroundColor: const Color(0xFF091625),
       body: Center(
         child: Container(
           color: const Color(0xFF191625),
@@ -18,6 +18,12 @@ class Splash1 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset(
+                    'assets/images/Screenshot (18).png',
+                    width: 200,
+                    height: 200,
+                  ),
+
                   RichText(
                     text: TextSpan(
                       children: [

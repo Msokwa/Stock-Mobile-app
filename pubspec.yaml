@@ -38,6 +38,7 @@ dependencies:
   shared_preferences: ^2.2.0
   geolocator: ^14.0.3
   geocoding: ^4.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -49,9 +50,11 @@ dependencies:
   country_flags: ^4.1.2
   supabase_flutter: ^2.15.0
   url_launcher: ^6.1.12
+  image: ^4.0.17
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -77,6 +80,14 @@ flutter:
     - assets/logo/
     - assets/images/
     - finnhub.env
+
+# Configuration for flutter_launcher_icons
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo/stockscope_rounded.png"
+  # use the rounded version after generating it with the tool
+  # image_path: "assets/logo/stockscope_rounded.png"
   # An image asset can refer to one or more resolution-specific "variants", see:
   # https://flutter.dev/to/resolution-aware-images
 

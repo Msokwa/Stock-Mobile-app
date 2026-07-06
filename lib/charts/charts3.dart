@@ -187,6 +187,7 @@ class _Chart3State extends State<Chart3> {
         final xInterval = max(1.0, (spots.last.x - spots.first.x) / 6);
 
         return Scaffold(
+          backgroundColor: const Color(0xFF091625),
           appBar: AppBar(
             backgroundColor: const Color(0xFF091625),
             elevation: 0,
@@ -201,6 +202,7 @@ class _Chart3State extends State<Chart3> {
             title: const Text('S&P 500'),
           ),
           body: Card(
+            color: const Color(0xFF091625),
             elevation: 3,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),

@@ -9,7 +9,10 @@ Future<void> main() async {
   await dotenv.load(fileName: 'finnhub.env');
 
   // Supabase setup
-  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseKey);
+  await Supabase.initialize(
+    url: Env.supabaseUrl,
+    publishableKey: Env.supabaseKey,
+  );
 
   // final api = FinnhubService();
   // final quote = await api.getQuote("AAPL");
@@ -32,7 +35,7 @@ class StockScope extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Splash(),
+      home: const Splash(),
       theme: ThemeData(
         colorScheme: colorScheme,
         brightness: colorScheme.brightness,

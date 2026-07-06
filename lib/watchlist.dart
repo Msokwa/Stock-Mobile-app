@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stock_app/services/env.dart';
+import 'package:stock_app/services/portfolio_service.dart';
 import 'package:stock_app/stockdetails.dart';
 
 class Watchlist extends StatefulWidget {
@@ -22,17 +22,11 @@ class _WatchlistState extends State<Watchlist> {
   bool _isGridView = false;
 
   Future<List<String>> _loadSavedTickers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getStringList('watchlist_symbols');
-    if (stored == null || stored.isEmpty) {
-      return ['AAPL', 'TSLA', 'NVDA', 'MSFT', 'AMZN', 'INTC'];
-    }
-    return stored.map((symbol) => symbol.trim().toUpperCase()).toList();
+    return loadWatchlistSymbols();
   }
 
   Future<void> _saveWatchlist() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('watchlist_symbols', _savedTickers);
+    await saveWatchlistSymbols(_savedTickers);
   }
 
   @override
@@ -111,6 +105,7 @@ class _WatchlistState extends State<Watchlist> {
           _watchlistData.add(newStock);
         });
         await _saveWatchlist();
+        await addWatchlistSymbol(cleanSymbol);
       }
     } catch (e) {
       if (mounted) {

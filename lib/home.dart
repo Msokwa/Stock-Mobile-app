@@ -31,6 +31,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String _greeting = 'Good morning there';
   String _country = 'United States';
+  int _selectedNavIndex = 0;
   List<Map<String, String>> _trendingStocks = [];
   DateTime? _trendingUpdatedAt;
 
@@ -326,48 +327,59 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.black,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-          child: GNav(
-            backgroundColor: const Color(0xFF091625),
-            color: Colors.white,
-            activeColor: Colors.black,
-            tabBackgroundColor: const Color.fromARGB(255, 91, 90, 90),
-            padding: EdgeInsets.all(16),
-            gap: 8,
-            selectedIndex: 0,
-            onTabChange: (index) {
-              if (index == 1) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => News()),
-                );
-              } else if (index == 2) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Portfolio()),
-                );
-              } else if (index == 3) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Pro()),
-                );
-              } else if (index == 4) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Account()),
-                );
-              }
-            },
-            tabs: [
-              GButton(icon: Icons.home, text: 'Home'),
-              GButton(icon: Icons.article, text: 'News'),
-              GButton(icon: Icons.pie_chart, text: 'Portfolio'),
-              GButton(icon: Icons.star, text: 'Pro'),
-              GButton(icon: Icons.person, text: 'Account'),
-            ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.black,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 15.0,
+              right: 15.0,
+              bottom: MediaQuery.of(context).padding.bottom + 12,
+              top: 12,
+            ),
+            child: GNav(
+              backgroundColor: const Color(0xFF091625),
+              color: Colors.white,
+              activeColor: Colors.black,
+              tabBackgroundColor: const Color.fromARGB(255, 91, 90, 90),
+              padding: const EdgeInsets.all(16),
+              gap: 8,
+              selectedIndex: _selectedNavIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedNavIndex = index;
+                });
+                if (index == 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => News()),
+                  );
+                } else if (index == 2) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Portfolio()),
+                  );
+                } else if (index == 3) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Pro()),
+                  );
+                } else if (index == 4) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Account()),
+                  );
+                }
+              },
+              tabs: [
+                GButton(icon: Icons.home, text: 'Home'),
+                GButton(icon: Icons.article, text: 'News'),
+                GButton(icon: Icons.pie_chart, text: 'Portfolio'),
+                GButton(icon: Icons.star, text: 'Pro'),
+                GButton(icon: Icons.person, text: 'Account'),
+              ],
+            ),
           ),
         ),
       ),

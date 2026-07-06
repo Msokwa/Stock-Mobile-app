@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Rounded square background (adjust rx to control corner curvature) -->
+  <defs>
+    <clipPath id="round-clip">
+      <rect x="0" y="0" width="1024" height="1024" rx="180" ry="180" />
+    </clipPath>
+  </defs>
+
+  <!-- Background color (transparent by default) -->
+  <rect x="0" y="0" width="1024" height="1024" rx="180" ry="180" fill="white"/>
+
+  <!-- Embed existing PNG centered and scaled to cover the rounded square -->
+  <image href="stockscope.png" x="0" y="0" width="1024" height="1024" clip-path="url(#round-clip)" preserveAspectRatio="xMidYMid slice" />
+</svg>

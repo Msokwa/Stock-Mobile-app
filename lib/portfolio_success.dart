@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:stock_app/portfolio.dart';
 import 'package:stock_app/home.dart';
 
-class Success extends StatelessWidget {
-  const Success({super.key});
+class PortfolioSuccess extends StatelessWidget {
+  const PortfolioSuccess({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +45,12 @@ class Success extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Thank you for Upgrading to Pro.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'You now have access to all Pro features.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Home()),
+                    MaterialPageRoute(builder: (context) => Portfolio()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -68,10 +60,8 @@ class Success extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text('Go to Home'),
+                child: const Text('Go to Portfolio'),
               ),
-              
-              
             ],
           ),
         ),

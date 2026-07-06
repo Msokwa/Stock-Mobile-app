@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stock_app/services/env.dart';
 import 'package:stock_app/services/historical_data_service.dart';
+import 'package:stock_app/services/portfolio_service.dart';
 import 'package:stock_app/watchlist.dart';
 import 'package:stock_app/payment.dart';
 
@@ -360,23 +360,8 @@ class _StockDetailsState extends State<StockDetails> {
 
   Future<void> _addToWatchlist() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedSymbols = prefs.getStringList('watchlist_symbols') ?? [];
       final symbol = widget.symbol.trim().toUpperCase();
-
-      if (savedSymbols.contains(symbol)) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('This stock is already in your watchlist'),
-            ),
-          );
-        }
-        return;
-      }
-
-      savedSymbols.add(symbol);
-      await prefs.setStringList('watchlist_symbols', savedSymbols);
+      await addWatchlistSymbol(symbol);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -826,6 +811,7 @@ class _StockDetailsState extends State<StockDetails> {
                                           description: widget.description,
                                           price: _currentPrice ?? 0,
                                           action: 'buy',
+                                          shares: 1,
                                         ),
                                       ),
                                     );
@@ -861,6 +847,7 @@ class _StockDetailsState extends State<StockDetails> {
                                           description: widget.description,
                                           price: _currentPrice ?? 0,
                                           action: 'sell',
+                                          shares: 1,
                                         ),
                                       ),
                                     );

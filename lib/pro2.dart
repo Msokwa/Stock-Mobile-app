@@ -248,7 +248,7 @@ class _Pro2State extends State<Pro2> {
                                   color: Colors.white,
                                 ),
                               ),
-                              Spacer(),
+                              SizedBox(width: 4),
                               const Text(
                                 'Pro features unlocked',
                                 style: TextStyle(
@@ -304,7 +304,6 @@ class _Pro2State extends State<Pro2> {
                         'assets/images/paypal.png',
                         'PayPal',
                       ),
-                      
                     ],
                   ),
                   const SizedBox(height: 30),

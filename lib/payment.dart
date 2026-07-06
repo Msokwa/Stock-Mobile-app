@@ -8,6 +8,7 @@ class Payment extends StatelessWidget {
   final String? description;
   final double? price;
   final String? action;
+  final int shares;
 
   const Payment({
     super.key,
@@ -15,6 +16,7 @@ class Payment extends StatelessWidget {
     this.description,
     this.price,
     this.action,
+    this.shares = 1,
   });
 
   @override
@@ -160,8 +162,12 @@ class Payment extends StatelessWidget {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  if (action == 'buy' && symbol != null) {
-                    await addPortfolioHolding(symbol!);
+                  if (symbol != null && action != null) {
+                    await applyPortfolioTransaction(
+                      symbol!,
+                      action: action!,
+                      shares: shares,
+                    );
                   }
 
                   if (!context.mounted) return;

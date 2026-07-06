@@ -129,219 +129,221 @@ class _RegisterState extends State<Register> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Welcome Back!',
-                style: TextStyle(
-                  color: Color(0xFFD9D9D9),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Welcome Back!',
+                  style: TextStyle(
+                    color: Color(0xFFD9D9D9),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Register to continue',
-                style: TextStyle(color: Color(0xFFD9D9D9), fontSize: 15),
-              ),
-              const SizedBox(height: 20),
-              Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _nameController,
-                            keyboardType: TextInputType.name,
-                            decoration: const InputDecoration(
-                              labelText: 'Full Name',
-                              hintText: 'Enter full name',
-                              hintStyle: TextStyle(color: Colors.green),
-                              fillColor: Color(0xff091625),
-                              filled: true,
-                              prefixIcon: Icon(Icons.person),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              return (value == null || value.isEmpty)
-                                  ? 'please enter your name'
-                                  : null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
-                              hintText: 'Enter Email',
-                              hintStyle: TextStyle(color: Colors.green),
-                              fillColor: Color(0xff091625),
-                              filled: true,
-                              prefixIcon: Icon(Icons.email),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              return (value == null || value.isEmpty)
-                                  ? 'please enter email'
-                                  : null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Password',
-                              hintText: 'Enter password',
-                              hintStyle: TextStyle(color: Colors.green),
-                              fillColor: Color(0xff091625),
-                              filled: true,
-                              prefixIcon: Icon(Icons.lock),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              return (value == null || value.isEmpty)
-                                  ? 'please enter password'
-                                  : null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _confirmPasswordController,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Confirm Password',
-                              hintText: 'Re-enter password',
-                              hintStyle: TextStyle(color: Colors.green),
-                              fillColor: Color(0xff091625),
-                              filled: true,
-                              prefixIcon: Icon(Icons.lock),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              return (value == null || value.isEmpty)
-                                  ? 'please confirm password'
-                                  : null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    Row(
-                      children: const [
-                        Icon(Icons.check_box, color: Colors.white),
-                        SizedBox(width: 3),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'I agree to ',
-                                  style: TextStyle(
-                                    color: Color(0xFFFFFFFF),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
+                const SizedBox(height: 8),
+                const Text(
+                  'Register to continue',
+                  style: TextStyle(color: Color(0xFFD9D9D9), fontSize: 15),
+                ),
+                const SizedBox(height: 20),
+                Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _nameController,
+                              keyboardType: TextInputType.name,
+                              decoration: const InputDecoration(
+                                labelText: 'Full Name',
+                                hintText: 'Enter full name',
+                                hintStyle: TextStyle(color: Colors.green),
+                                fillColor: Color(0xff091625),
+                                filled: true,
+                                prefixIcon: Icon(Icons.person),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
                                   ),
                                 ),
-                                TextSpan(
-                                  text: 'Terms & Conditions',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                              ),
+                              validator: (value) {
+                                return (value == null || value.isEmpty)
+                                    ? 'please enter your name'
+                                    : null;
+                              },
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 19),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : signUp,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: const Color(0xFF2BAB4A),
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 24,
-                        ),
+                        ],
                       ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(
-                                  Colors.white,
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                labelText: 'Email',
+                                hintText: 'Enter Email',
+                                hintStyle: TextStyle(color: Colors.green),
+                                fillColor: Color(0xff091625),
+                                filled: true,
+                                prefixIcon: Icon(Icons.email),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
                                 ),
-                                strokeWidth: 2,
                               ),
-                            )
-                          : const Text(
-                              'Create Account',
-                              style: TextStyle(
-                                color: Color(0xFFD9D9D9),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              validator: (value) {
+                                return (value == null || value.isEmpty)
+                                    ? 'please enter email'
+                                    : null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Password',
+                                hintText: 'Enter password',
+                                hintStyle: TextStyle(color: Colors.green),
+                                fillColor: Color(0xff091625),
+                                filled: true,
+                                prefixIcon: Icon(Icons.lock),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                return (value == null || value.isEmpty)
+                                    ? 'please enter password'
+                                    : null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Confirm Password',
+                                hintText: 'Re-enter password',
+                                hintStyle: TextStyle(color: Colors.green),
+                                fillColor: Color(0xff091625),
+                                filled: true,
+                                prefixIcon: Icon(Icons.lock),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                return (value == null || value.isEmpty)
+                                    ? 'please confirm password'
+                                    : null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        children: const [
+                          Icon(Icons.check_box, color: Colors.white),
+                          SizedBox(width: 3),
+                          Expanded(
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'I agree to ',
+                                    style: TextStyle(
+                                      color: Color(0xFFFFFFFF),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Terms & Conditions',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                    ),
-                  ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 19),
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : signUp,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          backgroundColor: const Color(0xFF2BAB4A),
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 24,
+                          ),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
+                                  ),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Create Account',
+                                style: TextStyle(
+                                  color: Color(0xFFD9D9D9),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

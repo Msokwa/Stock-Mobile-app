@@ -187,6 +187,7 @@ class _ChartsState extends State<Chart1> {
         final yInterval = max(1.0, yDelta / 4);
         final xInterval = max(1.0, (spots.last.x - spots.first.x) / 6);
         return Scaffold(
+          backgroundColor: const Color(0xFF091625),
           appBar: AppBar(
             backgroundColor: const Color(0xFF091625),
             elevation: 0,
@@ -201,6 +202,7 @@ class _ChartsState extends State<Chart1> {
             title: const Text('DAX'),
           ),
           body: Card(
+            color: const Color(0xFF091625),
             elevation: 3,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
