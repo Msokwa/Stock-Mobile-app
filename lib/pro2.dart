@@ -71,8 +71,9 @@ class _Pro2State extends State<Pro2> {
                       });
                     },
                     child: Container(
-                      height: 87,
                       width: double.infinity,
+                      padding: const EdgeInsets.all(16.0),
+                      constraints: const BoxConstraints(minHeight: 84),
                       decoration: BoxDecoration(
                         color: const Color(0xFF091625),
                         borderRadius: BorderRadius.circular(8),
@@ -81,48 +82,49 @@ class _Pro2State extends State<Pro2> {
                           width: isMonthlySelected ? 2 : 1,
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isMonthlySelected
+                                    ? Colors.green
+                                    : Colors.grey,
+                                width: 2,
+                              ),
+                            ),
+                            child: isMonthlySelected
+                                ? const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 12,
+                                      color: Colors.green,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Row(
                               children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isMonthlySelected
-                                          ? Colors.green
-                                          : Colors.grey,
-                                      width: 2,
+                                const Expanded(
+                                  child: Text(
+                                    'Monthly',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  child: isMonthlySelected
-                                      ? const Center(
-                                          child: Icon(
-                                            Icons.check,
-                                            size: 12,
-                                            color: Colors.green,
-                                          ),
-                                        )
-                                      : null,
                                 ),
-                                const SizedBox(width: 12),
-                                const Text(
-                                  'Monthly',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 const Text(
                                   '\$4.99/month',
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
@@ -131,8 +133,8 @@ class _Pro2State extends State<Pro2> {
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -144,8 +146,9 @@ class _Pro2State extends State<Pro2> {
                       });
                     },
                     child: Container(
-                      height: 87,
                       width: double.infinity,
+                      padding: const EdgeInsets.all(16.0),
+                      constraints: const BoxConstraints(minHeight: 84),
                       decoration: BoxDecoration(
                         color: const Color(0xFF091625),
                         borderRadius: BorderRadius.circular(8),
@@ -156,48 +159,49 @@ class _Pro2State extends State<Pro2> {
                           width: !isMonthlySelected ? 2 : 1,
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: !isMonthlySelected
+                                    ? Colors.green
+                                    : Colors.grey,
+                                width: 2,
+                              ),
+                            ),
+                            child: !isMonthlySelected
+                                ? const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 12,
+                                      color: Colors.green,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Row(
                               children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: !isMonthlySelected
-                                          ? Colors.green
-                                          : Colors.grey,
-                                      width: 2,
+                                const Expanded(
+                                  child: Text(
+                                    'Yearly',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  child: !isMonthlySelected
-                                      ? const Center(
-                                          child: Icon(
-                                            Icons.check,
-                                            size: 12,
-                                            color: Colors.green,
-                                          ),
-                                        )
-                                      : null,
                                 ),
-                                const SizedBox(width: 12),
-                                const Text(
-                                  'Yearly',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 const Text(
                                   '\$49.90/year',
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
@@ -206,8 +210,8 @@ class _Pro2State extends State<Pro2> {
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -222,19 +226,19 @@ class _Pro2State extends State<Pro2> {
                   ),
                   const SizedBox(height: 12),
                   Container(
-                    height: 80,
                     width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    constraints: const BoxConstraints(minHeight: 80),
                     decoration: BoxDecoration(
                       color: const Color(0xFF091625),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.green, width: 2),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -242,15 +246,17 @@ class _Pro2State extends State<Pro2> {
                                 isMonthlySelected
                                     ? 'Monthly Plan'
                                     : 'Yearly Plan',
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(height: 4),
                               const Text(
                                 'Pro features unlocked',
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -259,16 +265,21 @@ class _Pro2State extends State<Pro2> {
                               ),
                             ],
                           ),
-                          Text(
+                        ),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: Text(
                             planPrice,
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -281,30 +292,58 @@ class _Pro2State extends State<Pro2> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  GridView.count(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      _buildPaymentMethodCard(
-                        'assets/images/symbol.png',
-                        'Apple Pay',
+                  // Compact horizontal list of payment method cards
+                  SizedBox(
+                    height: 90,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: _buildPaymentMethodCard(
+                                'assets/images/symbol.png',
+                                'Apple Pay',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: _buildPaymentMethodCard(
+                                'assets/images/card.png',
+                                'Credit Card',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: _buildPaymentMethodCard(
+                                'assets/images/google-pay.png',
+                                'Google Pay',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: _buildPaymentMethodCard(
+                                'assets/images/paypal.png',
+                                'PayPal',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                       ),
-                      _buildPaymentMethodCard(
-                        'assets/images/card.png',
-                        'Credit Card',
-                      ),
-                      _buildPaymentMethodCard(
-                        'assets/images/google-pay.png',
-                        'Google Pay',
-                      ),
-                      _buildPaymentMethodCard(
-                        'assets/images/paypal.png',
-                        'PayPal',
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
@@ -354,8 +393,8 @@ class _Pro2State extends State<Pro2> {
         children: [
           Image.asset(
             imagePath,
-            height: 32,
-            width: 40,
+            height: 28,
+            width: 34,
             errorBuilder: (context, error, stackTrace) => Container(
               height: 32,
               width: 40,

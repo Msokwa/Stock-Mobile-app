@@ -46,11 +46,15 @@ class Payment extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(
+            top: 30,
+            left: 16,
+            right: 16,
+            bottom: 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               if (symbol != null && action != null) ...[
                 Container(
@@ -101,46 +105,44 @@ class Payment extends StatelessWidget {
                 const SizedBox(height: 30),
               ],
               Container(
-                height: 198,
-                width: 368,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                constraints: const BoxConstraints(minHeight: 198),
                 decoration: BoxDecoration(
                   color: const Color(0xFF091625),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Text(
-                        'visa',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    Text(
+                      'visa',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
-                      Text(
-                        '**** **** **** 4242',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                    ),
+                    Text(
+                      '**** **** **** 4242',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
-                      SizedBox(height: 30),
-                      Text(
-                        'Expiry Date: 12/24',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
+                    ),
+                    SizedBox(height: 30),
+                    Text(
+                      'Expiry Date: 12/24',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 30),
@@ -179,7 +181,7 @@ class Payment extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  minimumSize: const Size(368, 67),
+                  minimumSize: const Size(double.infinity, 67),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

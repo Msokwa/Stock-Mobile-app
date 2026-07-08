@@ -89,5 +89,5 @@ void main() {
 
   final out = img.encodePng(dst);
   File(outPath).writeAsBytesSync(out);
-  print('Wrote $outPath');
+  stdout.writeln('Wrote $outPath');
 }

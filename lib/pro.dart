@@ -14,15 +14,20 @@ class Pro extends StatelessWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.push(
+          onPressed: () => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(builder: (context) => const Home()),
           ),
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 16,
+            right: 16,
+            bottom: 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -61,207 +66,77 @@ class Pro extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 45),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 294,
-                      margin: const EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF091625),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 20,
-                          left: 16,
-                          right: 16,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isWide = constraints.maxWidth > 600;
+                  if (isWide) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildPlanCard(
+                            title: 'Free',
+                            features: const [
+                              'Basic Charts',
+                              'Watchlist',
+                              'Ad Supported',
+                            ],
+                            iconColor: Colors.green,
+                            isFree: true,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Free',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Basic Charts',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Watchlist',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.close, color: Colors.red),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Ad Supported',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildPlanCard(
+                            title: 'Pro\n\$4.99/month',
+                            features: const [
+                              'Real-time Quotes',
+                              'Advanced Charts',
+                              'Unlimited watchlist',
+                              'Portfolio Analysis',
+                              'Priority Support',
+                            ],
+                            iconColor: Colors.green,
+                            isFree: false,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildPlanCard(
+                          title: 'Free',
+                          features: const [
+                            'Basic Charts',
+                            'Watchlist',
+                            'Ad Supported',
                           ],
+                          iconColor: Colors.green,
+                          isFree: true,
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 294,
-                      margin: const EdgeInsets.only(left: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF091625),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 20,
-                          left: 16,
-                          right: 16,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Pro\n\$4.99/month',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.yellow,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Real-time Quotes',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Advanced Charts',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Unlimited watchlist',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Portfolio Analysis',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.check, color: Colors.green),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Priority Support',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildPlanCard(
+                          title: 'Pro\n\$4.99/month',
+                          features: const [
+                            'Real-time Quotes',
+                            'Advanced Charts',
+                            'Unlimited watchlist',
+                            'Portfolio Analysis',
+                            'Priority Support',
                           ],
+                          iconColor: Colors.green,
+                          isFree: false,
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -273,7 +148,7 @@ class Pro extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  minimumSize: const Size(368, 50),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -283,6 +158,63 @@ class Pro extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlanCard({
+    required String title,
+    required List<String> features,
+    required Color iconColor,
+    required bool isFree,
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF091625),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              color: isFree ? Colors.grey : Colors.yellow,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...features.map(
+            (feature) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    feature == 'Ad Supported' ? Icons.close : Icons.check,
+                    color: feature == 'Ad Supported' ? Colors.red : iconColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      feature,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

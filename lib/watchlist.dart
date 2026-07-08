@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:stock_app/services/env.dart';
+
+import 'package:stock_app/services/finnhub_service.dart';
 import 'package:stock_app/services/portfolio_service.dart';
 import 'package:stock_app/stockdetails.dart';
 
@@ -13,7 +12,6 @@ class Watchlist extends StatefulWidget {
 }
 
 class _WatchlistState extends State<Watchlist> {
-  final String apiKey = Env.finnhubApiKey;
   final TextEditingController _searchController = TextEditingController();
 
   List<String> _savedTickers = [];
@@ -29,6 +27,27 @@ class _WatchlistState extends State<Watchlist> {
     await saveWatchlistSymbols(_savedTickers);
   }
 
+  void _showWatchlistSnackBar(String message, {Color? backgroundColor}) {
+    if (!mounted) return;
+
+    final route = ModalRoute.of(context);
+    if (route != null && !route.isCurrent) return;
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger == null) return;
+
+    messenger
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: backgroundColor,
+        ),
+      );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -36,25 +55,47 @@ class _WatchlistState extends State<Watchlist> {
   }
 
   Future<StockWatchInfo> _fetchSingleStockData(String symbol) async {
-    final profileUrl =
-        'https://finnhub.io/api/v1/stock/profile2?symbol=$symbol&token=$apiKey';
-    final quoteUrl =
-        'https://finnhub.io/api/v1/quote?symbol=$symbol&token=$apiKey';
+    String name = symbol.toUpperCase();
+    String logo = '';
+    double price = 0.0;
+    double percentChange = 0.0;
 
-    final responses = await Future.wait([
-      http.get(Uri.parse(profileUrl)),
-      http.get(Uri.parse(quoteUrl)),
-    ]);
+    // Use Finnhub directly for quote, company profile, and candle data.
+    try {
+      final profile = await FinnhubService.fetchCompanyProfile(symbol);
+      if (profile['name'] != null && profile['name']!.isNotEmpty) {
+        name = profile['name']!;
+      }
+      if (profile['logo'] != null && profile['logo']!.isNotEmpty) {
+        logo = profile['logo']!;
+      }
 
-    final profileJson = jsonDecode(responses[0].body);
-    final quoteJson = jsonDecode(responses[1].body);
+      final latestClose = await FinnhubService.fetchLatestClose(symbol);
+      if (latestClose != null && latestClose > 0) {
+        price = latestClose;
+      }
+
+      final now = DateTime.now();
+      final from = now.subtract(const Duration(days: 3));
+      final points = await FinnhubService.fetchHistorical(symbol, from, now);
+      if (points.isNotEmpty) {
+        final last = points.last;
+        price = price > 0 ? price : last.close;
+        if (points.length >= 2) {
+          final prev = points[points.length - 2];
+          percentChange = ((last.close - prev.close) / prev.close) * 100;
+        }
+      }
+    } catch (_) {}
+
+    // Do not use Finnhub for profile lookup. Keep symbol name and blank logo if Marketstack does not provide metadata.
 
     return StockWatchInfo(
       symbol: symbol.toUpperCase(),
-      name: profileJson['name'] ?? 'Unknown Company',
-      logo: profileJson['logo'] ?? '',
-      price: (quoteJson['c'] as num).toDouble(),
-      percentChange: (quoteJson['dp'] as num).toDouble(),
+      name: name,
+      logo: logo,
+      price: double.parse(price.toStringAsFixed(2)),
+      percentChange: double.parse(percentChange.toStringAsFixed(2)),
     );
   }
 
@@ -77,25 +118,16 @@ class _WatchlistState extends State<Watchlist> {
     }
   }
 
-  void _addNewStock(String symbol) async {
-    if (symbol.isEmpty) return;
+  Future<void> _addResolvedSymbol(String symbol) async {
     final cleanSymbol = symbol.trim().toUpperCase();
+    if (cleanSymbol.isEmpty) return;
 
     if (_savedTickers.contains(cleanSymbol)) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Stock already in watchlist')),
-        );
-      }
+      _showWatchlistSnackBar('Stock already in watchlist');
       return;
     }
 
     _searchController.clear();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Searching and adding $cleanSymbol...')),
-      );
-    }
 
     try {
       final newStock = await _fetchSingleStockData(cleanSymbol);
@@ -106,14 +138,91 @@ class _WatchlistState extends State<Watchlist> {
         });
         await _saveWatchlist();
         await addWatchlistSymbol(cleanSymbol);
+        _showWatchlistSnackBar('$cleanSymbol added to watchlist');
       }
     } catch (e) {
-      if (mounted) {
+      _showWatchlistSnackBar(
+        'Stock symbol not found or network error',
+        backgroundColor: const Color(0xFFFF3D00),
+      );
+    }
+  }
+
+  Future<void> _addNewStock(String query) async {
+    final input = query.trim();
+    if (input.isEmpty) return;
+
+    try {
+      final directSymbol = input.toUpperCase();
+      if (directSymbol.contains(RegExp(r'^[A-Z0-9.:_\-]+$')) &&
+          directSymbol.length <= 10) {
+        await _addResolvedSymbol(directSymbol);
+        return;
+      }
+
+      final results = await FinnhubService.searchTickers(input, limit: 8);
+      if (!mounted) return;
+
+      if (results.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Stock symbol not found or network error'),
-          ),
+          const SnackBar(content: Text('No matching stocks found in Finnhub')),
         );
+        return;
+      }
+
+      if (results.length == 1) {
+        final symbol = results.first['symbol'] ?? '';
+        if (symbol.isNotEmpty) {
+          await _addResolvedSymbol(symbol);
+          return;
+        }
+      }
+
+      await showDialog<void>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF1A2232),
+            title: const Text(
+              'Choose a symbol',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: results.length,
+                itemBuilder: (context, index) {
+                  final item = results[index];
+                  final symbol = item['symbol'] ?? '';
+                  final description = item['description'] ?? '';
+                  return ListTile(
+                    title: Text(
+                      symbol,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      description,
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      if (symbol.isNotEmpty) {
+                        await _addResolvedSymbol(symbol);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Finnhub search failed: $e')));
       }
     }
   }
@@ -126,7 +235,13 @@ class _WatchlistState extends State<Watchlist> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const StockDetails(symbol: '', description: ''),
+              ),
+            );
           },
         ),
         title: const Text(

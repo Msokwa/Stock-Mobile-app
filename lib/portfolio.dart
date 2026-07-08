@@ -72,10 +72,10 @@ class _PortfolioState extends State<Portfolio> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(25.0),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(25.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
@@ -85,28 +85,28 @@ class _PortfolioState extends State<Portfolio> {
                 Center(
                   child: SizedBox(
                     width: double.infinity,
-                    height: mediaQuery.size.width * 0.7,
+                    height: mediaQuery.size.width * 0.55,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         PieChart(
                           dataMap: dataMap,
-                          animationDuration: Duration(milliseconds: 1200),
+                          animationDuration: const Duration(milliseconds: 1200),
                           chartLegendSpacing: 32,
-                          chartRadius: mediaQuery.size.width / 1.2,
+                          chartRadius: mediaQuery.size.width / 1.5,
                           colorList: colorlist,
                           initialAngleInDegree: 270,
                           chartType: ChartType.ring,
                           ringStrokeWidth: 60,
                           centerText:
                               'Total value\n\$${totalValue.toStringAsFixed(2)}',
-                          centerTextStyle: TextStyle(color: Colors.grey),
+                          centerTextStyle: const TextStyle(color: Colors.grey),
                           legendOptions: LegendOptions(
                             showLegendsInRow: false,
                             legendPosition: LegendPosition.right,
                             showLegends: true,
                             legendShape: BoxShape.circle,
-                            legendTextStyle: TextStyle(
+                            legendTextStyle: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
@@ -114,7 +114,6 @@ class _PortfolioState extends State<Portfolio> {
                           ),
                           chartValuesOptions: ChartValuesOptions(
                             showChartValues: true,
-
                             showChartValueBackground: false,
                             showChartValuesInPercentage: true,
                           ),
@@ -123,7 +122,7 @@ class _PortfolioState extends State<Portfolio> {
                     ),
                   ),
                 ),
-              SizedBox(height: 55),
+              const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -140,8 +139,11 @@ class _PortfolioState extends State<Portfolio> {
                   ],
                 ),
               ),
-              Container(width: 387, height: 1, color: const Color(0xFF374151)),
-
+              Container(
+                width: double.infinity,
+                height: 1,
+                color: const Color(0xFF374151),
+              ),
               const SizedBox(height: 12),
               if (holdings.isEmpty)
                 const Padding(
@@ -165,57 +167,54 @@ class _PortfolioState extends State<Portfolio> {
                       );
                     },
                     child: Container(
-                      height: 70,
-                      width: 368,
+                      width: double.infinity,
                       margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF091625),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey, width: 1),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '$symbol (${entry.value} shares)',
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '$symbol (${entry.value} shares)',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                '\$${entry.value.toDouble().toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  '\$${entry.value.toDouble().toStringAsFixed(2)}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              const SizedBox(height: 5),
+                              const Text(
+                                'Owned',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                const SizedBox(height: 5),
-                                const Text(
-                                  'Owned',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   );

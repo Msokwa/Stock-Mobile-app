@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:stock_app/home.dart';
 import 'package:stock_app/search.dart';
 import 'package:stock_app/services/env.dart';
+import 'package:stock_app/services/finnhub_service.dart';
 import 'package:stock_app/stockdetails.dart';
 import 'package:stock_app/services/location_service.dart';
 
@@ -18,7 +16,6 @@ class Stock extends StatefulWidget {
 class _StockState extends State<Stock> {
   List<Map<String, String>> _trendingStocks = [];
   DateTime? _trendingUpdatedAt;
-  final String _finnhubApiKey = Env.finnhubApiKey;
 
   String _formatUpdatedAt(DateTime dateTime) {
     final time = TimeOfDay.fromDateTime(dateTime);
@@ -34,7 +31,7 @@ class _StockState extends State<Stock> {
       appBar: AppBar(
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: const Color(0xFF191625),
+        backgroundColor: const Color(0xFF091625),
         leading: IconButton(
           iconSize: 23,
           icon: const Icon(Icons.arrow_back),
@@ -65,7 +62,7 @@ class _StockState extends State<Stock> {
       ),
 
       // create the all,stocks Button
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
@@ -168,29 +165,38 @@ class _StockState extends State<Stock> {
       }
 
       try {
-        final quoteUrl = Uri.parse(
-          'https://finnhub.io/api/v1/quote?symbol=${Uri.encodeQueryComponent(symbol)}&token=$_finnhubApiKey',
-        );
-        final response = await http.get(quoteUrl);
-        if (response.statusCode != 200) {
-          updated.add(stock);
-          continue;
+        if (Env.marketstackApiKey != null) {
+          // try marketstack for latest close and previous close to compute change
+          final now = DateTime.now();
+          final from = now.subtract(const Duration(days: 3));
+          final points = await FinnhubService.fetchHistorical(
+            symbol,
+            from,
+            now,
+          );
+          if (points.isNotEmpty) {
+            final last = points.last;
+            double? changePct;
+            if (points.length >= 2) {
+              final prev = points[points.length - 2];
+              changePct = ((last.close - prev.close) / prev.close) * 100;
+            }
+
+            updated.add({
+              'symbol': symbol,
+              'name': stock['name'] ?? symbol,
+              'price': last.close.toStringAsFixed(2),
+              'change': changePct != null
+                  ? '${changePct >= 0 ? '+' : ''}${changePct.toStringAsFixed(2)}%'
+                  : (stock['change'] ?? ''),
+            });
+            continue;
+          }
         }
 
-        final data = json.decode(response.body) as Map<String, dynamic>;
-        final current = (data['c'] as num?)?.toDouble();
-        final changePct = (data['dp'] as num?)?.toDouble();
-
-        updated.add({
-          'symbol': symbol,
-          'name': stock['name'] ?? symbol,
-          'price': current != null
-              ? current.toStringAsFixed(2)
-              : (stock['price'] ?? ''),
-          'change': changePct != null
-              ? '${changePct >= 0 ? '+' : ''}${changePct.toStringAsFixed(2)}%'
-              : (stock['change'] ?? ''),
-        });
+        // Marketstack did not return points; do not call Finnhub — keep existing value
+        updated.add(stock);
+        continue;
       } catch (_) {
         updated.add(stock);
       }

@@ -1,10 +1,18 @@
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:stock_app/services/env.dart';
+import 'package:stock_app/services/finnhub_service.dart';
 import 'package:stock_app/stockdetails.dart';
 
 class Search extends SearchDelegate<String?> {
+  static const int _maxRetries = 3;
+  static const int _minQueryLength = 2;
+  static const Duration _baseBackoff = Duration(milliseconds: 500);
+  static final Map<String, List<Map<String, String>>> _searchCache = {};
+  static final Map<String, Future<List<Map<String, String>>>> _pendingRequests =
+      {};
+  static DateTime? _lastSearchTime;
+  static String _lastSearchQuery = '';
+
   @override
   ThemeData appBarTheme(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,27 +31,59 @@ class Search extends SearchDelegate<String?> {
   }
 
   Future<List<Map<String, String>>> fetchSearch(String query) async {
-    final String apiKey = Env.finnhubApiKey;
-    final String searchUrl =
-        'https://finnhub.io/api/v1/search?q=${Uri.encodeQueryComponent(query)}&token=$apiKey';
-
-    final uri = Uri.parse(searchUrl);
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      final jsonBody = json.decode(response.body) as Map<String, dynamic>;
-      final data = jsonBody['result'] as List<dynamic>? ?? [];
-      return data
-          .map(
-            (item) => {
-              'symbol': item['symbol'] as String? ?? '',
-              'description': item['description'] as String? ?? '',
-            },
-          )
-          .toList();
-    } else {
-      throw Exception('Failed to load search results');
+    final normalizedQuery = query.trim();
+    if (normalizedQuery.length < _minQueryLength) {
+      return [];
     }
+
+    if (_searchCache.containsKey(normalizedQuery)) {
+      return _searchCache[normalizedQuery]!;
+    }
+
+    if (_pendingRequests.containsKey(normalizedQuery)) {
+      return _pendingRequests[normalizedQuery]!;
+    }
+
+    final requestFuture = _performSearch(normalizedQuery);
+    _pendingRequests[normalizedQuery] = requestFuture;
+    try {
+      final results = await requestFuture;
+      _searchCache[normalizedQuery] = results;
+      return results;
+    } finally {
+      _pendingRequests.remove(normalizedQuery);
+      _lastSearchTime = DateTime.now();
+      _lastSearchQuery = normalizedQuery;
+    }
+  }
+
+  Future<List<Map<String, String>>> _performSearch(
+    String normalizedQuery,
+  ) async {
+    final minimumDelay = const Duration(milliseconds: 400);
+    if (_lastSearchTime != null &&
+        DateTime.now().difference(_lastSearchTime!) < minimumDelay &&
+        normalizedQuery != _lastSearchQuery) {
+      await Future.delayed(minimumDelay);
+    }
+
+    for (int attempt = 0; attempt < _maxRetries; attempt++) {
+      try {
+        final results = await FinnhubService.searchTickers(
+          normalizedQuery,
+          limit: 20,
+        );
+        if (results.isNotEmpty || attempt == _maxRetries - 1) {
+          return results;
+        }
+        await Future.delayed(_baseBackoff * (attempt + 1));
+      } catch (e) {
+        if (attempt == _maxRetries - 1) rethrow;
+        await Future.delayed(_baseBackoff * (attempt + 1));
+      }
+    }
+
+    return [];
   }
 
   @override
@@ -70,8 +110,8 @@ class Search extends SearchDelegate<String?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    if (query.isEmpty) {
-      return const Center(child: Text('Type a stock symbol'));
+    if (query.trim().length < _minQueryLength) {
+      return const Center(child: Text('Type at least 2 characters to search'));
     }
 
     return FutureBuilder<List<Map<String, String>>>(

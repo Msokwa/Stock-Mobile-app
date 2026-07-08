@@ -20,7 +20,7 @@ Future<void> main() async {
 
   runApp(const StockScope());
 }
-
+  
 final supabase = Supabase.instance.client;
 
 class StockScope extends StatelessWidget {

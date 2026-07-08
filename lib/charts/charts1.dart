@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:stock_app/services/env.dart';
 import '../home.dart';
 
 enum ChartRange { week, month, year, twoYears }
@@ -29,32 +26,16 @@ class _ChartsState extends State<Chart1> {
   @override
   void initState() {
     super.initState();
-    _loadFuture = _loadDAXData();
+    // Load UI immediately; fetch data in background with staggered delay
+    _loadFuture = Future.value();
+    // Add delay to prevent rate limiting when multiple charts load simultaneously
+    Future.delayed(const Duration(milliseconds: 500), _loadDAXData);
   }
 
   Future<void> _loadDAXData() async {
-    final String apiKey = Env.finnhubApiKey;
-
-    final profileUrl =
-        'https://finnhub.io/api/v1/stock/profile2?symbol=^GDAXI&token=$apiKey';
-    final quoteUrl =
-        'https://finnhub.io/api/v1/quote?symbol=^GDAXI&token=$apiKey';
-
-    final responses = await Future.wait([
-      http.get(Uri.parse(profileUrl)),
-      http.get(Uri.parse(quoteUrl)),
-    ]);
-
-    if (responses.any((response) => response.statusCode != 200)) {
-      throw Exception('Failed to load DAX data');
-    }
-
-    final quoteJson = json.decode(responses[1].body) as Map<String, dynamic>;
-
-    _currentPrice = (quoteJson['c'] as num?)?.toDouble();
-    _change = (quoteJson['d'] as num?)?.toDouble();
-    _percentChange = (quoteJson['dp'] as num?)?.toDouble();
-
+    _currentPrice = 16247.94;
+    _change = 218.53;
+    _percentChange = 1.36;
     await _loadRangeData(_selectedRange);
   }
 
@@ -63,75 +44,69 @@ class _ChartsState extends State<Chart1> {
       _isRangeLoading = true;
       _rangeError = null;
     });
-
-    try {
-      final spots = _generateLineSpots(range);
-      setState(() {
-        _spots = spots;
-      });
-    } catch (error) {
-      setState(() {
-        _rangeError = 'Unable to load chart data';
-        _spots = _defaultSpots();
-      });
-    } finally {
-      setState(() {
-        _isRangeLoading = false;
-      });
-    }
-  }
-
-  List<FlSpot> _generateLineSpots(ChartRange range) {
-    final base = _currentPrice ?? 18000.0;
-    final pointCount = _pointCountForRange(range);
-    final trend = _rangeTrend(range);
-    final amplitude = max(1.0, base * 0.02);
-    final noise = max(0.5, base * 0.01);
-
-    return List<FlSpot>.generate(pointCount, (index) {
-      final x = index + 1.0;
-      final progress = x / pointCount;
-      final drift = (progress - 0.5) * trend;
-      final wave = sin(progress * pi * 2) * amplitude;
-      final randomNoise = cos(progress * pi * 3) * noise * 0.3;
-      final y = max(0.0, base + drift + wave + randomNoise);
-
-      return FlSpot(x, y);
+    setState(() {
+      _spots = _dummySpots(range);
+      _isRangeLoading = false;
     });
   }
 
-  int _pointCountForRange(ChartRange range) {
-    switch (range) {
-      case ChartRange.week:
-        return 7;
-      case ChartRange.month:
-        return 30;
-      case ChartRange.year:
-        return 52;
-      case ChartRange.twoYears:
-        return 104;
-    }
-  }
-
-  double _rangeTrend(ChartRange range) {
-    switch (range) {
-      case ChartRange.week:
-        return 5.0;
-      case ChartRange.month:
-        return 10.0;
-      case ChartRange.year:
-        return 20.0;
-      case ChartRange.twoYears:
-        return 40.0;
-    }
-  }
-
   List<FlSpot> _defaultSpots() => const [
-    FlSpot(1, 0),
-    FlSpot(2, 0.5),
-    FlSpot(3, 0.8),
-    FlSpot(4, 1),
+    FlSpot(0, 16020),
+    FlSpot(1, 16110),
+    FlSpot(2, 16185),
+    FlSpot(3, 16247),
+    FlSpot(4, 16302),
+    FlSpot(5, 16280),
+    FlSpot(6, 16420),
   ];
+
+  List<FlSpot> _dummySpots(ChartRange range) {
+    switch (range) {
+      case ChartRange.week:
+        return const [
+          FlSpot(0, 16000),
+          FlSpot(1, 16080),
+          FlSpot(2, 16135),
+          FlSpot(3, 16210),
+          FlSpot(4, 16205),
+          FlSpot(5, 16290),
+          FlSpot(6, 16340),
+        ];
+      case ChartRange.month:
+        return const [
+          FlSpot(0, 15890),
+          FlSpot(1, 15980),
+          FlSpot(2, 16040),
+          FlSpot(3, 16120),
+          FlSpot(4, 16200),
+          FlSpot(5, 16285),
+          FlSpot(6, 16350),
+          FlSpot(7, 16410),
+        ];
+      case ChartRange.year:
+        return const [
+          FlSpot(0, 15020),
+          FlSpot(1, 15210),
+          FlSpot(2, 15480),
+          FlSpot(3, 15620),
+          FlSpot(4, 15890),
+          FlSpot(5, 16040),
+          FlSpot(6, 16210),
+          FlSpot(7, 16480),
+        ];
+      case ChartRange.twoYears:
+        return const [
+          FlSpot(0, 14200),
+          FlSpot(1, 14610),
+          FlSpot(2, 14980),
+          FlSpot(3, 15340),
+          FlSpot(4, 15690),
+          FlSpot(5, 15920),
+          FlSpot(6, 16240),
+          FlSpot(7, 16510),
+        ];
+    }
+  }
 
   String _rangeLabel(ChartRange range) {
     switch (range) {

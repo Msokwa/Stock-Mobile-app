@@ -1,11 +1,10 @@
 // import 'package:fl_chart/fl_chart.dart';
 import 'dart:async';
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:http/http.dart' as http;
-import 'package:stock_app/services/env.dart';
+// import 'package:http/http.dart' as http;
 import 'package:stock_app/stock.dart';
 import 'package:stock_app/stockdetails.dart';
 import 'country.dart';
@@ -14,7 +13,6 @@ import 'notifications.dart';
 import 'portfolio.dart';
 import 'pro.dart';
 import 'account.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stock_app/services/location_service.dart';
 import 'package:stock_app/main.dart';
 import 'package:stock_app/charts/charts1.dart';
@@ -33,22 +31,12 @@ class _HomeState extends State<Home> {
   String _country = 'United States';
   int _selectedNavIndex = 0;
   List<Map<String, String>> _trendingStocks = [];
-  DateTime? _trendingUpdatedAt;
 
   @override
   void initState() {
     super.initState();
     _loadHomeDetails();
   }
-
-  String _formatUpdatedAt(DateTime dateTime) {
-    final time = TimeOfDay.fromDateTime(dateTime);
-    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
-    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:${time.minute.toString().padLeft(2, '0')} $period';
-  }
-
-  final String _finnhubApiKey = Env.finnhubApiKey;
 
   Future<void> _loadHomeDetails() async {
     String name = 'there';
@@ -80,8 +68,6 @@ class _HomeState extends State<Home> {
       _greeting = LocationService.buildGreeting(DateTime.now(), name);
       _trendingStocks = LocationService.resolveTrendingStocks(country);
     });
-
-    await _refreshTrendingQuotes();
   }
 
   Future<void> _openCountryPicker() async {
@@ -107,65 +93,6 @@ class _HomeState extends State<Home> {
         _trendingStocks = LocationService.resolveTrendingStocks(savedCountry);
       });
     }
-
-    await _refreshTrendingQuotes();
-  }
-
-  Future<void> _refreshTrendingQuotes() async {
-    if (_trendingStocks.isEmpty) return;
-
-    final updatedStocks = <Map<String, String>>[];
-
-    for (final stock in _trendingStocks) {
-      final symbol = stock['symbol'] ?? '';
-      if (symbol.isEmpty) {
-        updatedStocks.add(stock);
-        continue;
-      }
-
-      try {
-        final quoteUrl = Uri.parse(
-          'https://finnhub.io/api/v1/quote'
-          '?symbol=${Uri.encodeQueryComponent(symbol)}'
-          '&token=$_finnhubApiKey',
-        );
-        final response = await http
-            .get(quoteUrl)
-            .timeout(
-              const Duration(seconds: 10),
-              onTimeout: () => throw TimeoutException('API request timed out'),
-            );
-        if (response.statusCode != 200) {
-          debugPrint('Failed to fetch $symbol: ${response.statusCode}');
-          updatedStocks.add(stock);
-          continue;
-        }
-
-        final data = json.decode(response.body) as Map<String, dynamic>;
-        final current = (data['c'] as num?)?.toDouble();
-        final change = (data['dp'] as num?)?.toDouble();
-
-        updatedStocks.add({
-          'symbol': symbol,
-          'name': stock['name'] ?? symbol,
-          'price': current != null
-              ? current.toStringAsFixed(2)
-              : stock['price']!,
-          'change': change != null
-              ? '${change >= 0 ? '+' : ''}${change.toStringAsFixed(2)}%'
-              : stock['change']!,
-        });
-      } catch (e) {
-        debugPrint('Error fetching quote for $symbol: $e');
-        updatedStocks.add(stock);
-      }
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _trendingStocks = updatedStocks;
-      _trendingUpdatedAt = DateTime.now();
-    });
   }
 
   @override
@@ -347,30 +274,45 @@ class _HomeState extends State<Home> {
               gap: 8,
               selectedIndex: _selectedNavIndex,
               onTabChange: (index) {
+                if (!mounted) return;
+
+                if (index == _selectedNavIndex) {
+                  if (index == 0) {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
+                  return;
+                }
+
                 setState(() {
                   _selectedNavIndex = index;
                 });
-                if (index == 1) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => News()),
-                  );
-                } else if (index == 2) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Portfolio()),
-                  );
-                } else if (index == 3) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Pro()),
-                  );
-                } else if (index == 4) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Account()),
-                  );
+
+                if (index == 0) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  return;
                 }
+
+                Widget page;
+                switch (index) {
+                  case 1:
+                    page = const News();
+                    break;
+                  case 2:
+                    page = const Portfolio();
+                    break;
+                  case 3:
+                    page = const Pro();
+                    break;
+                  case 4:
+                    page = const Account();
+                    break;
+                  default:
+                    return;
+                }
+
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (context) => page));
               },
               tabs: [
                 GButton(icon: Icons.home, text: 'Home'),
@@ -399,7 +341,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,41 +401,43 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              // const SizedBox(height: 12),
-              // const Text(
-              //   'Summary',
-              //   style: TextStyle(
-              //     color: Colors.white70,
-              //     fontSize: 12,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildChartContainer(
-                    'DAX',
-                    '16,247.94',
-                    '+1.35%',
-                    const Chart1(),
+                  Expanded(
+                    child: _buildChartContainer(
+                      'DAX',
+                      '16,247.94',
+                      '+1.35%',
+                      const Chart1(),
+                    ),
                   ),
-                  _buildChartContainer(
-                    'NASDAQ',
-                    '16,920.79',
-                    '+0.42%',
-                    const Chart2(),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildChartContainer(
+                      'NASDAQ',
+                      '16,920.79',
+                      '+0.42%',
+                      const Chart2(),
+                    ),
                   ),
-                  _buildChartContainer(
-                    'S&P 500',
-                    '5,325.28',
-                    '+0.72%',
-                    const Chart3(),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildChartContainer(
+                      'S&P 500',
+                      '5,325.28',
+                      '+0.72%',
+                      const Chart3(),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              Spacer(),
+
+              SizedBox(height: MediaQuery.of(context).size.height * 0.30),
+
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -512,17 +456,6 @@ class _HomeState extends State<Home> {
                                 color: Colors.white,
                               ),
                             ),
-                            if (_trendingUpdatedAt != null) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                'Live • Updated ${_formatUpdatedAt(_trendingUpdatedAt!)}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       ),

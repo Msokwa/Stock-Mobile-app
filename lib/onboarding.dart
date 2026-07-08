@@ -71,7 +71,7 @@ class Onboarding extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 120),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(

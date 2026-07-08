@@ -10,7 +10,7 @@ class Splash2 extends StatelessWidget {
       backgroundColor: const Color(0xFF091625),
       body: Center(
         child: Container(
-          color: const Color(0xFF191625),
+          color: const Color(0xFF091625),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 16, left: 30, right: 30),
